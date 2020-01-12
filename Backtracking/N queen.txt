@@ -1,0 +1,73 @@
+/* N-Queens Problem
+
+    Place N Queens on an NxN chessboard such that no queen is attacking any other queen.
+
+    A queen can attack another queen if:
+        - it is in the same row, or
+        - it is in the same column, or
+        - it is on a diagonal
+
+    We know that there will be 1 queen on each row, and 1 queen in each column of
+    the NxN chessboard.   We can represent the board as an N-element list of
+    integers, with the I'th position in the list representing the row number of the
+    queen in the I'th column.
+
+    So, the list [2, 4, 1, 3] corresponds to this chessboard:
+    
+    ---------
+    | | |Q| |
+    |Q| | | |
+    | | | |Q|
+    | |Q| | |
+    ---------
+
+    All solutions will be a permutation of the list of integers from 1 .. N.
+
+    There are no solutions for N=2 and N = 3.
+*/
+
+% n_queens(+N, -SafeChessBoard)
+n_queens(N, SafeChessBoard):-
+	integers_from_1_to_N(N, Integers),
+	permute(Integers, SafeChessBoard),
+	safe(SafeChessBoard).
+
+% integers_from_1_to_N(+N, -ListOfIntegers).
+integers_from_1_to_N(0, []):-
+	!.
+integers_from_1_to_N(N, [N|RestIntegers]):-
+	NextN is N - 1, 
+	integers_from_1_to_N(NextN, RestIntegers).
+
+%permute(+List, -Permutation)
+permute([], []).
+permute([Head|Tail], Permutation):-
+	permute(Tail, PermutedTail),
+	insert(Head, PermutedTail, Permutation).
+
+% insert(+Element, +List, -BiggerList)
+insert(Element, List, [Element|List]).
+insert(Element, [Head|List], [Head|BiggerList]):-
+	insert(Element, List, BiggerList).
+
+%safe(+ChessBoard) - safe/1 will be true no queen can attack any other queen
+% along a diagonal
+safe([]).
+safe([Queen|RestQueens]):-
+	safe(RestQueens),
+	\+ attacks_on_diagonal(Queen, RestQueens).
+
+% attacks_on_diagonal(+Queen, +Queens)
+attacks_on_diagonal(Queen, Queens):-
+	attacks_on_diagonal(Queen, 1, Queens).
+
+% attacks_on_diagonal(+Queen, +Distance, +Queens)
+% checks to see if the Queen can attack a Queen that is
+% Distance columns away.
+attacks_on_diagonal(Queen, Distance, [TargetQueen|_RestQueens]):-
+	Queen is TargetQueen + Distance.
+attacks_on_diagonal(Queen, Distance, [TargetQueen|_RestQueens]):-
+	Queen is TargetQueen - Distance.
+attacks_on_diagonal(Queen, Distance, [_TargetQueen|RestQueens]):-
+	NextDistance is Distance + 1,
+	attacks_on_diagonal(Queen, NextDistance, RestQueens).

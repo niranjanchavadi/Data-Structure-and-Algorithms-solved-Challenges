@@ -1,0 +1,22 @@
+public class StocksBuy {
+	public static void main(String[] args) {
+		
+       int a []= {7,5,1,5,4,5,9};
+       
+       int max = maxProfit(a);
+       System.out.println(max);
+	}
+
+	private static int maxProfit(int[] a) {
+		int maxprofit =0;
+		int minprice = Integer.MAX_VALUE;
+		
+		for (int i=0;i<a.length;i++)	
+		{
+			minprice = Math.min(minprice,a[i]);
+			maxprofit =Math.max(maxprofit,a[i]-minprice );
+		}
+		return maxprofit;
+	}
+
+}
